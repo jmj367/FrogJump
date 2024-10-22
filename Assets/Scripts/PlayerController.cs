@@ -164,8 +164,8 @@ public class PlayerController : MonoBehaviour
             sumDisplacement.y = Mathf.Sign(sumDisplacement.y) * param.limitOfVerticalRotation;
         }
 
-        float rotationX = Mathf.Clamp(sumDisplacement.y - adjustJumpDir, -jumpAngleLmt, jumpAngleLmt);
-        Vector3 dir = Quaternion.Euler(sumDisplacement.y - adjustJumpDir, sumDisplacement.x, 0) * Vector3.forward;
+        float rotationY = Mathf.Clamp(sumDisplacement.y - adjustJumpDir, -jumpAngleLmt, jumpAngleLmt);
+        Vector3 dir = Quaternion.Euler(rotationY, sumDisplacement.x, 0) * Vector3.forward;
         currentJumpDir = dir.normalized;
     }
 
