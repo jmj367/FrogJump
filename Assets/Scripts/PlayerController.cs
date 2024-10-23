@@ -131,7 +131,6 @@ public class PlayerController : MonoBehaviour
         if (!isJumpStart)
         {
             isChangeState = true;
-            TurnFwdQuickly();
             currentState = FrogState.Jump;
         }
     }
@@ -142,7 +141,7 @@ public class PlayerController : MonoBehaviour
         {
             isChangeState = false;
             isGrounded = false;
-            
+            TurnFwdQuickly();
             currentSpeed = currentJumpDir * currentJumpPower;
         }
 
