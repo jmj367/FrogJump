@@ -68,6 +68,9 @@ public class PlayerController : MonoBehaviour
         if (currentState == FrogState.Jump)
         {
             isGrounded = true;
+            Quaternion rotation = Quaternion.LookRotation(collision.contacts[0].normal, Vector3.up);
+            Quaternion rotationOffset = Quaternion.FromToRotation(Vector3.up, Vector3.forward);
+            transform.rotation = rotation * rotationOffset;
         }
     }
 
@@ -141,6 +144,7 @@ public class PlayerController : MonoBehaviour
         {
             isChangeState = false;
             isGrounded = false;
+            transform.rotation = Quaternion.identity;
             TurnFwdQuickly();
             currentSpeed = currentJumpDir * currentJumpPower;
         }
@@ -199,6 +203,8 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void TurnFwdQuickly()
     {
+     
+
         Vector3 cameraFwd = Camera.main.transform.forward;
         Vector3 myFwd = transform.forward;
 

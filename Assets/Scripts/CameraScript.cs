@@ -12,8 +12,6 @@ public class CameraScript : MonoBehaviour
     [Tooltip("ƒJƒƒ‰‚Ìİ’è’l")]
     [SerializeField] private Parameters param;
 
-    //ƒJƒƒ‰ˆÚ“®ŠÖŒW
-    private Vector3 targetTrack = Vector3.zero;
     //ƒJƒƒ‰‰ñ“]ŠÖŒW
     private Vector2 mouseDisplacement = Vector2.zero;
     private Vector2 sumDisplacement = Vector2.zero;
@@ -29,12 +27,6 @@ public class CameraScript : MonoBehaviour
     private void LateUpdate()
     {
         CameraRotate();
-    }
-
-    private void FixedUpdate()
-    {
-        targetTrack = Vector3.Lerp(
-            targetTrack, targetPos.position, Time.deltaTime * 10);
     }
 
     /// <summary>
@@ -59,7 +51,7 @@ public class CameraScript : MonoBehaviour
         transform.position = targetPos.position;
         transform.position += rotation * distance;
 
-        Vector3 vNeckLevel = Vector3.up * param.neckLevel;
+        Vector3 vNeckLevel = targetPos.up * param.neckLevel;
         transform.position += vNeckLevel;
     }
 
