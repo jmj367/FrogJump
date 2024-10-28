@@ -69,16 +69,33 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             Vector3 nor = collision.contacts[0].normal;
-            Quaternion lookAtRotation = Quaternion.LookRotation(nor, Vector3.up);
-            Quaternion offsetRotation = Quaternion.FromToRotation(Vector3.up, Vector3.forward);
-            float w = transform.rotation.w;
-
-            transform.rotation = lookAtRotation * offsetRotation;
-
-            transform.Rotate(nor * w);
+            Stick(nor);
         }
     }
 
+    private void Stick(Vector3 nor)
+    {
+        if (nor.z == -1)
+        {
+            transform.Rotate(-90, 0, 0, Space.World);
+        }
+        else if (nor.z == 1)
+        {
+            transform.Rotate(90, 0, 0, Space.World);
+        }
+        else if (nor.x == 1)
+        {
+            transform.Rotate(0, 0, -90, Space.World);
+        }
+        else if (nor.x == -1)
+        {
+            transform.Rotate(0, 0, 90, Space.World);
+        }
+        else if (nor.y == -1)
+        {
+            transform.Rotate(0, 0, 180, Space.Self);
+        }
+    }
 
     private void Start()
     {
@@ -116,6 +133,7 @@ public class PlayerController : MonoBehaviour
         if (isJumpStart)
         {
             isChangeState = true;
+            currentSpeed = Vector3.zero;
             currentState = FrogState.JumpStart;
         }
     }
