@@ -68,9 +68,14 @@ public class PlayerController : MonoBehaviour
         if (currentState == FrogState.Jump)
         {
             isGrounded = true;
-            Quaternion rotation = Quaternion.LookRotation(collision.contacts[0].normal, Vector3.up);
-            Quaternion rotationOffset = Quaternion.FromToRotation(Vector3.up, Vector3.forward);
-            transform.rotation = rotation * rotationOffset;
+            Vector3 nor = collision.contacts[0].normal;
+            Quaternion lookAtRotation = Quaternion.LookRotation(nor, Vector3.up);
+            Quaternion offsetRotation = Quaternion.FromToRotation(Vector3.up, Vector3.forward);
+            float w = transform.rotation.w;
+
+            transform.rotation = lookAtRotation * offsetRotation;
+
+            transform.Rotate(nor * w);
         }
     }
 

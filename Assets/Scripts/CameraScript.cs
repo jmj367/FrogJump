@@ -67,7 +67,6 @@ public class CameraScript : MonoBehaviour
         if(Physics.SphereCast(targetPos.position + Vector3.up * param.neckLevel, 0.1f, rotation, out hit, distance, layermask))
         {
             distance = hit.distance;
-            Debug.Log(hit.distance);
         }
     }
 }
