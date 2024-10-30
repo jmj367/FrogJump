@@ -79,26 +79,8 @@ public class PlayerController : MonoBehaviour
     /// <param name="nor"></param>
     private void Stick(Vector3 nor)
     {
-        if (nor.z == -1)
-        {
-            transform.Rotate(-90, 0, 0, Space.World);
-        }
-        else if (nor.z == 1)
-        {
-            transform.Rotate(90, 0, 0, Space.World);
-        }
-        else if (nor.x == 1)
-        {
-            transform.Rotate(0, 0, -90, Space.World);
-        }
-        else if (nor.x == -1)
-        {
-            transform.Rotate(0, 0, 90, Space.World);
-        }
-        else if (nor.y == -1)
-        {
-            transform.Rotate(0, 0, 180, Space.Self);
-        }
+        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, nor);
+        transform.Rotate(rotation.eulerAngles, Space.World);
     }
 
     private void Start()
@@ -171,7 +153,6 @@ public class PlayerController : MonoBehaviour
         {
             isChangeState = false;
             isGrounded = false;
-            transform.rotation = Quaternion.identity;
             TurnFwdQuickly();
             currentSpeed = currentJumpDir * currentJumpPower;
         }
@@ -230,7 +211,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void TurnFwdQuickly()
     {
-     
+        transform.rotation = Quaternion.identity;
 
         Vector3 cameraFwd = Camera.main.transform.forward;
         Vector3 myFwd = transform.forward;
