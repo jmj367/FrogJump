@@ -73,6 +73,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// •ÇA“Vˆä‚É• ‚ğŒü‚¯‚éˆ—
+    /// </summary>
+    /// <param name="nor"></param>
     private void Stick(Vector3 nor)
     {
         if (nor.z == -1)
