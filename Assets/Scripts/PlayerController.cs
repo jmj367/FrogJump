@@ -26,7 +26,6 @@ public class PlayerController : MonoBehaviour
     private bool isJumpStart = false;
     private Vector2 mouseDisplacement = Vector2.zero;
 
-    private Rigidbody rb;
     //ジャンプ関連
     private float currentJumpPower = 0;
     private float defferenceJumpPower = 0;
@@ -79,15 +78,14 @@ public class PlayerController : MonoBehaviour
     /// <param name="nor"></param>
     private void Stick(Vector3 nor)
     {
+        //プレイヤーの上方向を衝突オブジェクトの法線ベクトルに向ける
         Quaternion rotation = Quaternion.FromToRotation(Vector3.up, nor);
         transform.Rotate(rotation.eulerAngles, Space.World);
     }
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
         isGrounded = true;
-        
     }
 
     private void Update()
