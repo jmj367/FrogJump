@@ -66,9 +66,16 @@ public class PlayerController : MonoBehaviour
     {
         if (currentState == FrogState.Jump)
         {
-            isGrounded = true;
-            Vector3 nor = collision.contacts[0].normal;
-            Stick(nor);
+            if (collision.gameObject.CompareTag("NonStickObj"))
+            {
+                currentSpeed.y *= -1;
+            }
+            else
+            {
+                isGrounded = true;
+                Vector3 nor = collision.contacts[0].normal;
+                Stick(nor);
+            }
         }
     }
 
