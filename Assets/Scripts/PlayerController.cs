@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     [Tooltip("カメラの設定値")]
     [SerializeField] private Parameters param;
+    [Tooltip("弾道予測シミュレーター")]
+    [SerializeField] private TrajectotySimulator trajectorySim;
     [Tooltip("最小のジャンプ力")]
     [SerializeField] private float minJumpPower = 8;
     [Tooltip("最大のジャンプ力")]
@@ -21,6 +23,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpAngleLmt = 90;
     [Tooltip("ジャンプ待機時の1秒毎の回転(度)")]
     [SerializeField] private float angleRotateSpd = 90;
+    [Tooltip("接地判定を行うまでの時間")]
+    [SerializeField] private float waitTime = 0.1f;
 
     //入力値
     private bool isJumpStart = false;
@@ -35,14 +39,16 @@ public class PlayerController : MonoBehaviour
     private Vector3 currentSpeed = Vector3.zero;
 
     //ステート関連
-    private bool isChangeState = false;
     private enum FrogState
     {
         Idle,
         JumpStart,
-        Jump
+        Jump,
+        WhilwJump
     }
-    private FrogState currentState = FrogState.Idle;
+    private FrogState curState = FrogState.Idle;
+    private FrogState prevState = FrogState.Idle;
+    private float timer = 0;
 
     //入力受取
     public void OnJumpStart(InputAction.CallbackContext context)
@@ -62,9 +68,9 @@ public class PlayerController : MonoBehaviour
         mouseDisplacement = context.ReadValue<Vector2>();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
-        if (currentState == FrogState.Jump)
+        if (curState == FrogState.WhilwJump)
         {
             if (collision.gameObject.CompareTag("NonStickObj"))
             {
@@ -99,11 +105,12 @@ public class PlayerController : MonoBehaviour
     {
         DecideJumpDIr();
 
-        switch (currentState)
+        switch (curState)
         {
             case FrogState.Idle: UpdateIdle(); break;
             case FrogState.JumpStart: UpdateJumpStart(); break;
             case FrogState.Jump: UpdateJump(); break;
+            case FrogState.WhilwJump: UpdateWhileJump(); break;
         }
 
         UpdateMove();
@@ -121,21 +128,27 @@ public class PlayerController : MonoBehaviour
     //ステート毎のUpdate
     private void UpdateIdle()
     {
+        if(curState != prevState)
+        {
+            prevState = curState;
+        }
+
         if (isJumpStart)
         {
-            isChangeState = true;
+            prevState = curState;
             currentSpeed = Vector3.zero;
-            currentState = FrogState.JumpStart;
+            curState = FrogState.JumpStart;
         }
     }
 
     private void UpdateJumpStart()
     {
-        if (isChangeState)
+        if (curState != prevState)
         {
-            isChangeState = false;
+            prevState = curState;
             currentJumpPower = minJumpPower;
             defferenceJumpPower = maxJumpPower - minJumpPower;
+            trajectorySim.SetIsSim(true);
         }
 
         TurnFwdSlowlyOnGround();
@@ -145,26 +158,44 @@ public class PlayerController : MonoBehaviour
             currentJumpPower = maxJumpPower;
         }
 
+        trajectorySim.SetValue(transform.position, currentJumpDir * currentJumpPower, gravity);
+
         if (!isJumpStart)
         {
-            isChangeState = true;
-            currentState = FrogState.Jump;
+            curState = FrogState.Jump;
         }
     }
 
     private void UpdateJump()
     {
-        if (isChangeState)
+        if (curState != prevState)
         {
-            isChangeState = false;
-            isGrounded = false;
+            prevState = curState;
             TurnFwdQuickly();
             currentSpeed = currentJumpDir * currentJumpPower;
+            isGrounded = false;
+            timer = 0;
+            trajectorySim.SetIsSim(false);
+        }
+
+        timer += Time.deltaTime;
+
+        if (timer > waitTime)
+        {
+            curState = FrogState.WhilwJump;
+        }
+    }
+
+    private void UpdateWhileJump()
+    {
+        if(curState != prevState)
+        {
+            prevState = curState;
         }
 
         if (isGrounded)
         {
-            currentState = FrogState.Idle;
+            curState = FrogState.Idle;
         }
     }
 
