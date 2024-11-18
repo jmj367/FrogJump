@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     private bool isJumpStart = false;
     private Vector2 mouseDisplacement = Vector2.zero;
 
+    //ジャンプスタート関連
+    private Vector3 turnAxis = Vector3.zero;
+
     //ジャンプ関連
     private float currentJumpPower = 0;
     private float defferenceJumpPower = 0;
@@ -81,6 +84,7 @@ public class PlayerController : MonoBehaviour
                 isGrounded = true;
                 Vector3 nor = collision.contacts[0].normal;
                 Stick(nor);
+                turnAxis = nor;
             }
         }
     }
@@ -99,6 +103,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         isGrounded = true;
+        turnAxis = Vector3.up;
     }
 
     private void Update()
@@ -128,11 +133,15 @@ public class PlayerController : MonoBehaviour
     //ステート毎のUpdate
     private void UpdateIdle()
     {
+        //Start
         if(curState != prevState)
         {
             prevState = curState;
         }
 
+        //Process
+
+        //End
         if (isJumpStart)
         {
             prevState = curState;
@@ -143,6 +152,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateJumpStart()
     {
+        //Start
         if (curState != prevState)
         {
             prevState = curState;
@@ -151,6 +161,7 @@ public class PlayerController : MonoBehaviour
             trajectorySim.SetIsSim(true);
         }
 
+        //Process
         TurnFwdSlowlyOnGround();
         currentJumpPower += defferenceJumpPower * Time.deltaTime / boostJumpTime;
         if(currentJumpPower > maxJumpPower)
@@ -160,6 +171,7 @@ public class PlayerController : MonoBehaviour
 
         trajectorySim.SetValue(transform.position, currentJumpDir * currentJumpPower, gravity);
 
+        //End
         if (!isJumpStart)
         {
             curState = FrogState.Jump;
@@ -168,6 +180,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateJump()
     {
+        //Start
         if (curState != prevState)
         {
             prevState = curState;
@@ -178,8 +191,10 @@ public class PlayerController : MonoBehaviour
             trajectorySim.SetIsSim(false);
         }
 
+        //Process
         timer += Time.deltaTime;
 
+        //End
         if (timer > waitTime)
         {
             curState = FrogState.WhilwJump;
@@ -188,11 +203,15 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateWhileJump()
     {
+        //Start
         if(curState != prevState)
         {
             prevState = curState;
         }
 
+        //Process
+
+        //End
         if (isGrounded)
         {
             curState = FrogState.Idle;
@@ -224,22 +243,22 @@ public class PlayerController : MonoBehaviour
         Vector3 cameraFwd = Camera.main.transform.forward;
         Vector3 myFwd = transform.forward;
 
-        Vector3 planeFrom = Vector3.ProjectOnPlane(myFwd, Vector3.up);
-        Vector3 planeTo = Vector3.ProjectOnPlane(cameraFwd, Vector3.up);
+        Vector3 planeFrom = Vector3.ProjectOnPlane(myFwd, turnAxis);
+        Vector3 planeTo = Vector3.ProjectOnPlane(cameraFwd, turnAxis);
 
-        float angle = Vector3.SignedAngle(planeFrom, planeTo, Vector3.up);
+        float angle = Vector3.SignedAngle(planeFrom, planeTo, turnAxis);
 
         Vector3 rotation = Vector3.zero;
         if(Mathf.Abs(angle) < angleRotateSpd * Time.deltaTime && angle != 0)
         {
-            rotation.y = Mathf.Sign(angle) * (angleRotateSpd * Time.deltaTime - Mathf.Abs(angle));
+            rotation = turnAxis * Mathf.Sign(angle) * (angleRotateSpd * Time.deltaTime - Mathf.Abs(angle));
         }
         else
         {
-            rotation.y = Mathf.Sign(angle) * angleRotateSpd * Time.deltaTime;
+            rotation = turnAxis * Mathf.Sign(angle) * angleRotateSpd * Time.deltaTime;
         }
 
-        transform.Rotate(rotation);
+        transform.Rotate(rotation, Space.World);
     }
 
     /// <summary>

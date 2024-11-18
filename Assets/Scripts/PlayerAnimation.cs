@@ -5,30 +5,21 @@ using UnityEngine.InputSystem;
 
 public class PlayerAnimation : MonoBehaviour
 {
-    /// <summary>
-    /// 前フレームのisJumpStart
-    /// </summary>
     private bool isBeforeJump = false;
+    private Vector3 beforeFwd = Vector3.zero;
 
     //入力値
-    /// <summary>
-    /// ジャンプボタンが押されたか
-    /// </summary>
     private bool isJumpStart = false;
 
-    /// <summary>
-    /// プレイヤーの状態
-    /// </summary>
     private enum State
     {
         Idle,
         Jump,
+        RightTurn,
+        LeftTurn
     }
-
-    /// <summary>
-    /// プレイヤーの現在のステータス
-    /// </summary>
-    private State currentState = State.Idle;
+    private State curState = State.Idle;
+    private State prevState = State.Idle;
 
     //ジャンプ開始入力受取
     public void OnJumpStart(InputAction.CallbackContext context)
@@ -54,6 +45,14 @@ public class PlayerAnimation : MonoBehaviour
     /// </summary>
     private void UpdateIdle()
     {
-        
+        //Start
+        if(prevState != curState)
+        {
+            prevState = curState;
+        }
+
+        //Process
+
+        //End
     }
 }
