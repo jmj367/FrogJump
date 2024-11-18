@@ -5,11 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerAnimation : MonoBehaviour
 {
+    [Tooltip("向くアニメーションを始めるまでのangle")]
+    [SerializeField] private float turnLmt = 0.1f;
+
     private bool isBeforeJump = false;
     private Vector3 beforeFwd = Vector3.zero;
 
     //入力値
-    private bool isJumpStart = false;
+    private bool isJump = false;
 
     private enum State
     {
@@ -24,25 +27,18 @@ public class PlayerAnimation : MonoBehaviour
     //ジャンプ開始入力受取
     public void OnJumpStart(InputAction.CallbackContext context)
     {
-        if(context.phase == InputActionPhase.Started)
-        {
-            isJumpStart = true;
-        }
-
         if(context.phase == InputActionPhase.Canceled)
         {
-            isJumpStart = false;
+            isJump = true;
         }
     }
 
     private void Update()
     {
-        
+        beforeFwd = transform.forward;
     }
 
-    /// <summary>
-    /// Idle状態の更新
-    /// </summary>
+    //ステート毎のUpdate
     private void UpdateIdle()
     {
         //Start
@@ -53,6 +49,83 @@ public class PlayerAnimation : MonoBehaviour
 
         //Process
 
+        float angle = GetAngleSub(beforeFwd, transform.forward, transform.up);
+
         //End
+        if(angle > turnLmt)
+        {
+            curState = State.RightTurn;
+        }
+
+        if(angle < -turnLmt)
+        {
+            curState = State.LeftTurn;
+        }
+
+        if (isJump)
+        {
+            curState = State.Jump;
+        }
+    }
+
+    private void UpdateRightTurn()
+    {
+        //Start
+        if (prevState != curState)
+        {
+            prevState = curState;
+        }
+
+        //Process
+        float angle = GetAngleSub(beforeFwd, transform.forward, transform.up);
+
+        //End
+        if(angle <= 0)
+        {
+            curState = State.Idle;
+        }
+
+        if (isJump)
+        {
+            curState = State.Jump;
+        }
+    }
+
+    private void UpdateLeftTurn()
+    {
+        //Start
+        if (prevState != curState)
+        {
+            prevState = curState;
+        }
+
+        //Process
+        float angle = GetAngleSub(beforeFwd, transform.forward, transform.up);
+
+        //End
+        if(angle <= 0)
+        {
+            curState = State.Idle;
+        }
+
+        if (isJump)
+        {
+            curState = State.Jump;
+        }
+    }
+
+    private float GetAngleSub(Vector3 fromFwd, Vector3 toFwd, Vector3 axis)
+    {
+        Vector3 planeFrom = Vector3.ProjectOnPlane(fromFwd, axis);
+        Vector3 planeTo = Vector3.ProjectOnPlane(toFwd, axis);
+
+        float angle = Vector3.SignedAngle(planeFrom, planeTo, transform.up);
+
+        return angle;
+    }
+
+    private void UpdateJump()
+    {
+
     }
 }
