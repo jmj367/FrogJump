@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Parameters param;
     [Tooltip("弾道予測シミュレーター")]
     [SerializeField] private TrajectotySimulator trajectorySim;
+    [Tooltip("プレイヤーアニメーション")]
+    [SerializeField] private PlayerAnimation pAnim;
     [Tooltip("最小のジャンプ力")]
     [SerializeField] private float minJumpPower = 8;
     [Tooltip("最大のジャンプ力")]
@@ -103,7 +105,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        DecideJumpDIr();
+        DecideJumpDir();
 
         switch (curState)
         {
@@ -216,7 +218,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// ジャンプする方向を決定する
     /// </summary>
-    private void DecideJumpDIr()
+    private void DecideJumpDir()
     {
         //カメラの位置の差を保持(yは移動量と逆の方向に回転させるので-)
         sumDispl.x += mouseDisplacement.x * param.cameraSensitivity.x;
