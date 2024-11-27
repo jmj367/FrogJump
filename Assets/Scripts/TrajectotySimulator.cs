@@ -12,12 +12,14 @@ public class TrajectotySimulator : MonoBehaviour
     [Tooltip("シミュレート間隔")]
     [SerializeField] private float simInterval = 0.5f;
 
+    //シミュレート関連
     private List<GameObject> simList;
     private Vector3 speed = Vector3.zero;
     private float gravity = 0;
     private bool isSim = false;
     private Vector3 targetPos = Vector3.zero;
 
+    //ステート関連
     private enum State
     {
         None,
@@ -40,8 +42,10 @@ public class TrajectotySimulator : MonoBehaviour
         }
     }
 
+    //ステート毎のUpdate
     private void UpdateNone()
     {
+        //Start
         if(curState != prevState)
         {
             prevState = curState;
@@ -54,6 +58,9 @@ public class TrajectotySimulator : MonoBehaviour
             simList.Clear();
         }
 
+        //Process
+
+        //End
         if (isSim)
         {
             curState = State.Sim;
@@ -62,6 +69,7 @@ public class TrajectotySimulator : MonoBehaviour
 
     private void UpdateSim()
     {
+        //Start
         if(curState != prevState)
         {
             prevState = curState;
@@ -72,6 +80,7 @@ public class TrajectotySimulator : MonoBehaviour
             }
         }
 
+        //Process
         var objPos = targetPos;
         var simSpd = speed;
 
@@ -82,6 +91,7 @@ public class TrajectotySimulator : MonoBehaviour
             simSpd.y -= gravity * simInterval;
         }
 
+        //End
         if (!isSim)
         {
             curState= State.None;

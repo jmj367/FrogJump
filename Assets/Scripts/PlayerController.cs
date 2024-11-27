@@ -244,7 +244,7 @@ public class PlayerController : MonoBehaviour
         //カメラの前方向と自身の前方向の角度の差を求める
         Vector3 cameraFwd = Camera.main.transform.forward;
         Vector3 myFwd = transform.forward;
-        //現在接地しているオブジェクトの法線ベクトルから見た二次元座標として計算
+        //transform.upを軸として計算
         Vector3 planeFrom = Vector3.ProjectOnPlane(myFwd, transform.up);
         Vector3 planeTo = Vector3.ProjectOnPlane(cameraFwd, transform.up);
 
