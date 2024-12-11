@@ -5,12 +5,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Elements")]
     [Tooltip("カメラの設定値")]
     [SerializeField] private Parameters param;
     [Tooltip("弾道予測シミュレーター")]
     [SerializeField] private TrajectotySimulator trajectorySim;
     [Tooltip("プレイヤーアニメーション")]
     [SerializeField] private PlayerAnimation pAnim;
+    [Header("ジャンプ関連値")]
     [Tooltip("最小のジャンプ力")]
     [SerializeField] private float minJumpPower = 8;
     [Tooltip("最大のジャンプ力")]
@@ -27,6 +29,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float angleRotateSpd = 90;
     [Tooltip("接地判定を行うまでの時間")]
     [SerializeField] private float waitTime = 0.1f;
+    [Tooltip("張り付き可オブジェクトのレイヤー")]
+    [SerializeField] private LayerMask stickLayer;
+    [SerializeField] private float rayLen = 0.2f;
 
     //入力値
     private bool isJumpStart = false;
@@ -116,6 +121,13 @@ public class PlayerController : MonoBehaviour
         }
 
         UpdateMove();
+    }
+
+    private bool IsGrounded()
+    {
+        Vector3 origin = transform.position;
+        Ray ray = new Ray(origin, curSpeed);
+        return 
     }
 
     private void UpdateMove()
