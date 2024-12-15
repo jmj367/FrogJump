@@ -136,9 +136,9 @@ GameObject:
   - component: {fileID: 170886361}
   - component: {fileID: 170886360}
   - component: {fileID: 170886359}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: StickObj
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -972,6 +972,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2410335358941641753, guid: db75eaec091f40b4781696eab0c18004, type: 3}
+      propertyPath: rayLen
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2410335358941641753, guid: db75eaec091f40b4781696eab0c18004, type: 3}
+      propertyPath: stickLayer.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 2410335358941641753, guid: db75eaec091f40b4781696eab0c18004, type: 3}
+      propertyPath: nonStickLayer.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
     - target: {fileID: 3497951378825203232, guid: db75eaec091f40b4781696eab0c18004, type: 3}
       propertyPath: m_Mass
       value: 1

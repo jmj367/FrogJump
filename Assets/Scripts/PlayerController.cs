@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float waitTime = 0.1f;
     [Tooltip("張り付き可オブジェクトのレイヤー")]
     [SerializeField] private LayerMask stickLayer;
+    [Tooltip("張り付き不可オブジェクトのレイヤー")]
+    [SerializeField] private LayerMask nonStickLayer;
+    [Tooltip("レイの長さ")]
     [SerializeField] private float rayLen = 0.2f;
 
     //入力値
@@ -44,6 +47,14 @@ public class PlayerController : MonoBehaviour
     private Vector2 sumDispl = Vector2.zero;
     private Vector3 curJumpDir = Vector3.zero;
     private Vector3 curSpeed = Vector3.zero;
+
+    //接地関連
+    private enum CollisionLayer
+    {
+        Stick,
+        NonStick,
+        Other
+    }
 
     //ステート関連
     private enum FrogState
@@ -75,23 +86,6 @@ public class PlayerController : MonoBehaviour
         mouseDisplacement = context.ReadValue<Vector2>();
     }
 
-    private void OnCollisionStay(Collision collision)
-    {
-        if (curState == FrogState.WhilwJump)
-        {
-            if (collision.gameObject.CompareTag("NonStickObj"))
-            {
-                curSpeed.y *= -1;
-            }
-            else
-            {
-                isGrounded = true;
-                Vector3 nor = collision.contacts[0].normal;
-                Stick(nor);
-            }
-        }
-    }
-
     /// <summary>
     /// 壁、天井に腹を向ける処理
     /// </summary>
@@ -121,13 +115,35 @@ public class PlayerController : MonoBehaviour
         }
 
         UpdateMove();
+
+        if(curState == FrogState.WhilwJump)
+        {
+            Grounded();
+        }
     }
 
-    private bool IsGrounded()
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        //Gizmos.DrawRay(transform.position, transform.forward * (rayLen + 1));
+        Gizmos.DrawSphere(transform.position, rayLen);
+    }
+
+    private void Grounded()
     {
         Vector3 origin = transform.position;
-        Ray ray = new Ray(origin, curSpeed);
-        return 
+        Ray ray = new Ray(origin, curSpeed.normalized);
+        RaycastHit hit;
+        //if (Physics.Raycast(ray, out hit, rayLen, stickLayer))
+        if(Physics.SphereCast(ray, rayLen, out hit, 0.1f, stickLayer))
+        {
+            isGrounded = true;
+            Stick(hit.normal);
+        }
+        else if(Physics.SphereCast(ray, rayLen, out hit, 0.1f, nonStickLayer))
+        {
+            curSpeed.y *= -1;
+        }
     }
 
     private void UpdateMove()
